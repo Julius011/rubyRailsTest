@@ -1,1 +1,33 @@
-<h1>Welcome to the test</h1>
+<div class="container">
+  <h1>Chat</h1>
+  <div class="chat-write">
+    <%= form_with(url: main_save_path, method: :post) do |f| %>
+      <div class="form-group">
+        <%= f.label :content %>
+        <%= f.text_area :content, class: "form-control", rows: 4 %>
+      </div>
+      <%= f.submit "Send", class: "btn btn-primary" %>
+      <% end %>
+    </div>
+  </div>
+
+ <div class="chat-history">
+  <h2>Chat History:</h2>
+  <ul class="chat-history">
+    <% if @chat_history.present? %>
+      <% @chat_history.each do |line| %>
+        <li class="chat-message"><%= line.strip %></li>
+      <% end %>
+    <% end %>
+  </ul>
+</div>
+
+<% if flash[:notice] %>
+  <div class="alert alert-success"><%= flash[:notice] %></div>
+<% end %>
+
+<div class="erase-button">
+  <%= form_with(url: main_erase_history_path, method: :delete, data: { confirm: "Are you sure you want to erase the chat history?" }) do |f| %>
+    <%= f.submit "Erase Chat History", class: "btn btn-danger" %>
+  <% end %>
+</div>
