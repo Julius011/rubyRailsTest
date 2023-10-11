@@ -11,28 +11,15 @@
 </div>
 
 <div class="chat-container">
-  <div class="chat-content">
-    <h2>File Content:</h2>
-    <ul class="chat-content">
-      <% if @chat_history.present? %>
-        <% @chat_history.each do |line| %>
-          <li class="chat-message">
-            <div>
-              <%= line.strip %>
-            </div>
-          </li>
-        <% end %>
-      <% end %>
-    </ul>
+  <h1>File Content</h1>
+    <div class="chat-content">
+      <div class="form-group">
+        <textarea class="form-control responsive-textarea" readonly><%= @chat_history %></textarea>
+    </div>
+    <div class="erase-button">
+      <%= form_with(url: main_erase_history_path, method: :delete, data: { confirm: "Are you sure you want to erase the File Content" }) do |f| %>
+      <%= f.submit "Erase File Content", class: "btn btn-primary" %>
+    <% end %>
+    </div>
   </div>
-</div>
-
-<% if flash[:notice] %>
-  <div class="alert alert-success"><%= flash[:notice] %></div>
-<% end %>
-
-<div class="erase-button">
-  <%= form_with(url: main_erase_history_path, method: :delete, data: { confirm: "Are you sure you want to erase the File Content" }) do |f| %>
-    <%= f.submit "Erase File Content", class: "btn btn-primary" %>
-  <% end %>
 </div>
