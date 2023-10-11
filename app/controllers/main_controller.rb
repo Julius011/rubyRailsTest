@@ -1,25 +1,49 @@
 class MainController < ApplicationController
+  # Initialize an empty array to store chat messages as a class variable.
+  cattr_accessor :chat_history
+  self.chat_history = []
+
   def index
-    chat_history = File.read('yourfile.txt') if File.exist?('yourfile.txt')
-    # Split on newlines and remove any leading/trailing whitespace
-    @chat_history = chat_history.to_s.split("\n").map(&:strip)
+    # Read chat history from the file and store it in memory.
+    self.chat_history = read_chat_history
+    @chat_history = self.chat_history
   end
 
   def save
     content = params[:content]
     time = Time.now.strftime("%Y/%m/%d %H:%M")
-    message = "[#{time}] #{content}"
-
-    existing_history = File.exist?('yourfile.txt') ? File.read('yourfile.txt') : ''
-    # Check if the existing history is empty before appending a newline
-    new_history = existing_history.empty? ? message : "#{existing_history}\n#{message}"
-    
-    File.write('yourfile.txt', new_history)
+  
+    messages = content.split("\n").map(&:strip)
+  
+    messages.each do |message|
+      self.chat_history << "[#{time}] #{message}"
+    end
+  
+    write_chat_history(self.chat_history)
+  
     redirect_to main_index_path
   end
+  
 
   def erase_history
-    File.write('yourfile.txt', '') # Clears the chat history file
+    # Clear the chat history in memory and save an empty array to the file.
+    self.chat_history = []
+    write_chat_history([])
+
     redirect_to main_index_path, notice: "Chat history has been erased."
+  end
+
+  private
+
+  def read_chat_history
+    if File.exist?('yourfile.txt')
+      File.read('yourfile.txt').split("\n").map(&:strip)
+    else
+      []
+    end
+  end
+
+  def write_chat_history(messages)
+    File.write('yourfile.txt', messages.join("\n"))
   end
 end
